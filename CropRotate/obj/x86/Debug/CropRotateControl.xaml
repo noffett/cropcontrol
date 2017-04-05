@@ -1,0 +1,29 @@
+﻿<UserControl x:ConnectionId='1'
+    x:Class="CropRotate.CropRotateControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CropRotate">
+
+    <Canvas>
+        <Canvas.RenderTransform>
+            <RotateTransform x:ConnectionId='2'
+                x:Name="RotateTransfom" />
+        </Canvas.RenderTransform>
+
+        <Image x:ConnectionId='3'                                      />
+
+        <local:SelectionAreaControl x:ConnectionId='4'
+            x:Name="SelectionArea"
+                                                                />
+        <!--
+            RotationAnchorPoint="{x:Bind RotationAnchorPoint, Mode=TwoWay}" />-->
+
+        <TextBlock
+            FontSize="30"
+            Margin="50">
+            <Run x:ConnectionId='5'                                                             /> - 
+            <Run x:ConnectionId='6'                                                           />
+        </TextBlock>
+    </Canvas>
+</UserControl>
+
