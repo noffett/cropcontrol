@@ -3,26 +3,48 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:CropRotate">
+    <UserControl.Resources>
+        <local:InversionConverter x:Key="InversionConverter" />
+    </UserControl.Resources>
 
-    <Canvas>
-        <Canvas.RenderTransform>
-            <RotateTransform
-                x:Name="RotateTransfom" />
-        </Canvas.RenderTransform>
+    <Grid
+        Background="AliceBlue"
+        SizeChanged="RootGrid_SizeChanged">
+        <!--<Canvas
+            Width="0"
+            Height="0">-->
+            <Image 
+                x:Name="ImageControl"
+                Source="{x:Bind ImageSource, Mode=OneWay}"
+                RenderTransformOrigin="0.5,0.5"
+                Stretch="Uniform"
+                ImageOpened="ImageControl_ImageOpened">
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <!--<TranslateTransform
+                            X="{x:Bind SelectionArea.HorizontalOffset, Mode=OneWay, Converter={StaticResource InversionConverter}}"
+                            Y="{x:Bind SelectionArea.VerticalOffset, Mode=OneWay, Converter={StaticResource InversionConverter}}" />-->
+                        <RotateTransform
+                            x:Name="RotateTransfom" 
+                            Angle="{x:Bind RotationAngle, Mode=OneWay}" />
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+        <!--</Canvas>-->
+        
+        <!--<local:SelectionAreaControl
+            x:Name="SelectionArea" />-->
 
-        <Image Source="{x:Bind Image, Mode=OneWay}" />
-
-        <local:SelectionAreaControl
-            x:Name="SelectionArea"
-            RotationAngle="{x:Bind RotationAngle, Mode=OneWay}" />
-        <!--
-            RotationAnchorPoint="{x:Bind RotationAnchorPoint, Mode=TwoWay}" />-->
-
-        <TextBlock
-            FontSize="30"
-            Margin="50">
-            <Run Text="{x:Bind SelectionArea.HorizontalOffset, Mode=OneWay}" /> - 
-            <Run Text="{x:Bind SelectionArea.VerticalOffset, Mode=OneWay}" />
-        </TextBlock>
-    </Canvas>
+        <StackPanel
+            Margin="50"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right">
+            <!--<TextBlock
+                Text="{x:Bind SelectionArea.HorizontalOffset, Mode=OneWay}"
+                FontSize="30" />
+            <TextBlock
+                Text="{x:Bind SelectionArea.VerticalOffset, Mode=OneWay}"
+                FontSize="30" />-->
+        </StackPanel>
+    </Grid>
 </UserControl>

@@ -12,9 +12,10 @@
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        
         <local:CropRotateControl
             RotationAngle="{x:Bind viewModel.StraighteningAngle, Mode=OneWay}"
-            Image="assets/DSCF4963.JPG" />
+            ImageSource="assets/DSCF4963_SMALL.JPG" />
 
         <Slider
             Orientation="Vertical"
@@ -24,6 +25,8 @@
             Height="200"
             Grid.Column="1"
             VerticalAlignment="Center"
-            Margin="30,0" />
+            Margin="30,0"
+            StepFrequency="0.05"
+            IsDirectionReversed="True" />
     </Grid>
 </Page>

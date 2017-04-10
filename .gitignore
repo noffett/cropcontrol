@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/CropRotate/bin/x64/Debug
+/.vs/CropRotate/v14/.suo
+CropRotate/obj/**
+CropRotate/obj/**
+CropRotate/obj/ARM/Debug/DesignTimeResolveAssemblyReferencesInput.cache
