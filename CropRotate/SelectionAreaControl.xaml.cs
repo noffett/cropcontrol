@@ -12,6 +12,7 @@ namespace CropRotate
         public event EventHandler<ManipulationDeltaRoutedEventArgs> TopLeftResizeDelta;
         public event EventHandler<ManipulationDeltaRoutedEventArgs> BottomRightResizeDelta;
 
+        public event EventHandler ResizeCompleted;
 
         public double HorizontalOffset
         {
@@ -40,7 +41,7 @@ namespace CropRotate
         }
 
         public static readonly DependencyProperty SelectionWidthProperty =
-            DependencyProperty.Register("SelectionWidth", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(400.0));
+            DependencyProperty.Register("SelectionWidth", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(0.0));
 
 
         public double SelectionHeight
@@ -50,7 +51,7 @@ namespace CropRotate
         }
 
         public static readonly DependencyProperty SelectionHeightProperty =
-            DependencyProperty.Register("SelectionHeight", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(300.0));
+            DependencyProperty.Register("SelectionHeight", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(0.0));
 
 
 
@@ -77,6 +78,7 @@ namespace CropRotate
 
         private void ResizeHandle_ResizeCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
+            ResizeCompleted?.Invoke(this, EventArgs.Empty);
             RefreshResizeHandles();
         }
 

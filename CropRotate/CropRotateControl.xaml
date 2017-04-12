@@ -23,8 +23,8 @@
                             CenterY="0.5"
                             Angle="{x:Bind RotationAngle, Mode=OneWay}" />
                         <ScaleTransform
-                            ScaleX="{x:Bind Scale, Mode=OneWay}"
-                            ScaleY="{x:Bind Scale, Mode=TwoWay}" />
+                            ScaleX="{x:Bind ImageScale, Mode=OneWay}"
+                            ScaleY="{x:Bind ImageScale, Mode=TwoWay}" />
                         <TranslateTransform
                             X="{x:Bind ImageHorizontalOffset, Mode=OneWay}"
                             Y="{x:Bind ImageVerticalOffset, Mode=OneWay}" />
@@ -35,20 +35,13 @@
 
         <local:SelectionAreaControl
             x:Name="SelectionArea"
-            SelectionWidth="{x:Bind ImageWidth, Mode=OneWay}"
-            SelectionHeight="{x:Bind ImageHeight, Mode=OneWay}"
-            HorizontalOffset="{x:Bind HorizontalOffset, Mode=OneWay}"
-            VerticalOffset="{x:Bind VerticalOffset, Mode=OneWay}"
+            SelectionWidth="{x:Bind SelectionWidth, Mode=OneWay}"
+            SelectionHeight="{x:Bind SelectionHeight, Mode=OneWay}"
+            HorizontalOffset="{x:Bind SelectionHorizontalOffset, Mode=OneWay}"
+            VerticalOffset="{x:Bind SelectionVerticalOffset, Mode=OneWay}"
             PanDelta="SelectionArea_PanDelta"
             TopLeftResizeDelta="SelectionArea_TopLeftResizeDelta"
-            BottomRightResizeDelta="SelectionArea_BottomRightResizeDelta" />
-
-        <TextBlock
-            x:Name="InfoText"
-            Foreground="White"
-            FontSize="30"
-            Margin="50"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Left" />
+            BottomRightResizeDelta="SelectionArea_BottomRightResizeDelta"
+            ResizeCompleted="SelectionArea_ResizeCompleted" />
     </Grid>
 </UserControl>

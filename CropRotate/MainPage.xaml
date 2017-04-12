@@ -14,8 +14,18 @@
         </Grid.ColumnDefinitions>
         
         <local:CropRotateControl
+            CropArea="{x:Bind viewModel.CropArea, Mode=TwoWay}"
             RotationAngle="{x:Bind viewModel.StraighteningAngle, Mode=OneWay}"
             ImageSource="assets/DSCF4974.JPG" />
+
+        <TextBlock
+            x:Name="InfoText"
+            Text="{x:Bind viewModel.InfoText, Mode=OneWay}"
+            Foreground="White"
+            FontSize="22"
+            Margin="30"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Left" />
 
         <Slider
             Orientation="Vertical"
