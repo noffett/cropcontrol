@@ -20,8 +20,13 @@
 
     <Grid>
         <Grid
-            x:Name="ResizeHandlePanel">
-            
+            x:Name="ResizeHandlePanel"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top">
+            <Grid.RenderTransform>
+                <TranslateTransform />
+            </Grid.RenderTransform>
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="20" />
                 <RowDefinition Height="*" />
@@ -45,7 +50,7 @@
                 Orientation="Vertical"
                 ResizeDelta="TopLeftResizeHandle_ResizeDelta"
                 ResizeCompleted="ResizeHandle_ResizeCompleted" />
-            
+
             <local:ResizeHandle
                 Grid.Row="1"
                 Grid.Column="0"
@@ -65,7 +70,7 @@
                 Orientation="Horizontal"
                 ResizeDelta="BottomRightResizeHandle_ResizeDelta"
                 ResizeCompleted="ResizeHandle_ResizeCompleted" />
-            
+
             <local:ResizeHandle
                 Grid.Row="2"
                 Grid.Column="1"
@@ -81,10 +86,18 @@
         </Grid>
 
         <Rectangle
-            Stroke="Black"
+            Stroke="White"
             StrokeThickness="2"
-            Width="{x:Bind VisualWidth, Mode=OneWay}"
-            Height="{x:Bind VisualHeight, Mode=OneWay}"
-            IsHitTestVisible="False" />
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Width="{x:Bind SelectionWidth, Mode=OneWay}"
+            Height="{x:Bind SelectionHeight, Mode=OneWay}"
+            IsHitTestVisible="False">
+            <Rectangle.RenderTransform>
+                <TranslateTransform
+                    X="{x:Bind HorizontalOffset, Mode=OneWay}"
+                    Y="{x:Bind VerticalOffset, Mode=OneWay}"/>
+            </Rectangle.RenderTransform>
+        </Rectangle>
     </Grid>
 </UserControl>

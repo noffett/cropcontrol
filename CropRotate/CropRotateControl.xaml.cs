@@ -2,6 +2,7 @@
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 
@@ -26,8 +27,16 @@ namespace CropRotate
         }
 
         public static readonly DependencyProperty CropAreaProperty =
-            DependencyProperty.Register("CropArea", typeof(Rect), typeof(CropRotateControl), new PropertyMetadata(new Rect()));
+            DependencyProperty.Register("CropArea", typeof(Rect), typeof(CropRotateControl), new PropertyMetadata(new Rect(), new PropertyChangedCallback(OnCropAreaPropertyChanged)));
 
+        private static void OnCropAreaPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var that = d as CropRotateControl;
+            var rect = (Rect)e.NewValue;
+
+            that.SelectionArea.SelectionWidth = rect.Width;
+            that.SelectionArea.SelectionHeight = rect.Height;
+        }
 
         public double RotationAngle
         {
@@ -79,7 +88,106 @@ namespace CropRotate
             this.InitializeComponent();
         }
 
-        private void RootGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+
+
+        public double ImageWidth
+        {
+            get { return (double)GetValue(ImageWidthProperty); }
+            set { SetValue(ImageWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty ImageWidthProperty =
+            DependencyProperty.Register("ImageWidth", typeof(double), typeof(CropRotateControl), new PropertyMetadata(0.0));
+
+
+        public double ImageHeight
+        {
+            get { return (double)GetValue(ImageHeightProperty); }
+            set { SetValue(ImageHeightProperty, value); }
+        }
+
+        public static readonly DependencyProperty ImageHeightProperty =
+            DependencyProperty.Register("ImageHeight", typeof(double), typeof(CropRotateControl), new PropertyMetadata(0.0));
+
+
+
+
+
+        private bool _imageOpened;
+        private Size _imageActualSize;
+
+        private void ImageControl_ImageOpened(object sender, RoutedEventArgs e)
+        {
+            var image = sender as Image;
+            _imageActualSize = new Size(image.ActualWidth, image.ActualHeight);
+
+            _imageOpened = true;
+        }
+
+
+
+        public double Scale
+        {
+            get { return (double)GetValue(ScaleProperty); }
+            set { SetValue(ScaleProperty, value); }
+        }
+
+        public static readonly DependencyProperty ScaleProperty =
+            DependencyProperty.Register("Scale", typeof(double), typeof(CropRotateControl), new PropertyMetadata(1.0));
+
+        public double HorizontalOffset
+        {
+            get { return (double)GetValue(HorizontalOffsetProperty); }
+            set { SetValue(HorizontalOffsetProperty, value); }
+        }
+
+        public static readonly DependencyProperty HorizontalOffsetProperty =
+            DependencyProperty.Register("HorizontalOffset", typeof(double), typeof(CropRotateControl), new PropertyMetadata(0.0, new PropertyChangedCallback(OnHorizontalOffsetPropertyChanged)));
+
+        private static void OnHorizontalOffsetPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var delta = (double)e.NewValue - (double)e.OldValue;
+            ((CropRotateControl)d).ImageHorizontalOffset += delta;
+        }
+
+        public double VerticalOffset
+        {
+            get { return (double)GetValue(VerticalOffsetProperty); }
+            set { SetValue(VerticalOffsetProperty, value); }
+        }
+
+        public static readonly DependencyProperty VerticalOffsetProperty =
+            DependencyProperty.Register("VerticalOffset", typeof(double), typeof(CropRotateControl), new PropertyMetadata(0.0, new PropertyChangedCallback(OnVerticalOffsetPropertyChanged)));
+
+        private static void OnVerticalOffsetPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var delta = (double)e.NewValue - (double)e.OldValue;
+            ((CropRotateControl)d).ImageVerticalOffset += delta;
+        }
+
+
+        public double ImageHorizontalOffset
+        {
+            get { return (double)GetValue(ImageHorizontalOffsetProperty); }
+            set { SetValue(ImageHorizontalOffsetProperty, value); }
+        }
+
+        public static readonly DependencyProperty ImageHorizontalOffsetProperty =
+            DependencyProperty.Register("ImageHorizontalOffset", typeof(double), typeof(CropRotateControl), new PropertyMetadata(0.0));
+
+
+        public double ImageVerticalOffset
+        {
+            get { return (double)GetValue(ImageVerticalOffsetProperty); }
+            set { SetValue(ImageVerticalOffsetProperty, value); }
+        }
+
+        public static readonly DependencyProperty ImageVerticalOffsetProperty =
+            DependencyProperty.Register("ImageVerticalOffset", typeof(double), typeof(CropRotateControl), new PropertyMetadata(0.0));
+
+
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!_imageOpened)
             {
@@ -89,29 +197,56 @@ namespace CropRotate
             var nettoWidth = e.NewSize.Width - SelectionAreaMargin.Left - SelectionAreaMargin.Right;
             var nettoHeight = e.NewSize.Height - SelectionAreaMargin.Top - SelectionAreaMargin.Bottom;
 
-            var image = this.ImageControl;
+            var xScale = nettoWidth / _imageActualSize.Width;
+            var yScale = nettoHeight / _imageActualSize.Height;
 
-            if (image.ActualWidth != nettoWidth)
-            {
-                image.Width = nettoWidth;
-            }
-            else
-            {
-                image.Height = nettoHeight;
-            }
+            Scale = xScale < yScale ? xScale : yScale;
 
-            //this.SelectionArea.MaxWidth = e.NewSize.Width - 2 * SelectionAreaMargin;
-            //this.SelectionArea.MaxHeight = e.NewSize.Height - 2 * SelectionAreaMargin;
+            ImageWidth = Scale * _imageActualSize.Width;
+            ImageHeight = Scale * _imageActualSize.Height;
+
+            HorizontalOffset = (e.NewSize.Width / 2.0) - (ImageWidth / 2.0);
+            VerticalOffset = (e.NewSize.Height / 2.0) - (ImageHeight / 2.0);
+
+            var delta = (double)e.NewValue - (double)e.OldValue;
+            ImageHorizontalOffset += delta;
         }
 
-        private bool _imageOpened;
-
-        private void ImageControl_ImageOpened(object sender, RoutedEventArgs e)
+        private void SelectionArea_TopLeftResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            //this.SelectionArea.VisualWidth = this.ImageControl.ActualWidth;
-            //this.SelectionArea.VisualHeight = this.ImageControl.ActualHeight;
+            HorizontalOffset += e.Delta.Translation.X;
+            VerticalOffset += e.Delta.Translation.Y;
 
-            _imageOpened = true;
+            var width = CropArea.Width - e.Delta.Translation.X;
+            var height = CropArea.Height - e.Delta.Translation.Y;
+
+            CropArea = new Rect() { X = CropArea.X, Y = CropArea.Y, Width = width, Height = height };
+        }
+
+        private void SelectionArea_BottomRightResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            var width = CropArea.Width + e.Delta.Translation.X;
+            var height = CropArea.Height + e.Delta.Translation.Y;
+
+            CropArea = new Rect() { X = CropArea.X, Y = CropArea.Y, Width = width, Height = height };
+        }
+
+        private void SelectionArea_PanDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            var x = CropArea.X - e.Delta.Translation.X;
+            var y = CropArea.Y - e.Delta.Translation.Y;
+
+            CropArea = new Rect() { X = x, Y = y, Width = CropArea.Width, Height = CropArea.Height };
+
+            ImageHorizontalOffset += e.Delta.Translation.X;
+            ImageVerticalOffset += e.Delta.Translation.Y;
+
+            SetInfoText();
+        }
+
+        private void SetInfoText()
+        {
+            InfoText.Text = $"X: {Math.Round(CropArea.X, 0)}\nY: {Math.Round(CropArea.Y, 0)}";
         }
     }
 }

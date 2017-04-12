@@ -2,11 +2,17 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace CropRotate
 {
     public sealed partial class SelectionAreaControl : UserControl
     {
+        public event EventHandler<ManipulationDeltaRoutedEventArgs> PanDelta;
+        public event EventHandler<ManipulationDeltaRoutedEventArgs> TopLeftResizeDelta;
+        public event EventHandler<ManipulationDeltaRoutedEventArgs> BottomRightResizeDelta;
+
+
         public double HorizontalOffset
         {
             get { return (double)GetValue(HorizontalOffsetProperty); }
@@ -27,34 +33,25 @@ namespace CropRotate
             DependencyProperty.Register("VerticalOffset", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(0.0));
 
 
-        public double VisualWidth
+        public double SelectionWidth
         {
-            get { return (double)GetValue(VisualWidthProperty); }
-            set { SetValue(VisualWidthProperty, value); }
+            get { return (double)GetValue(SelectionWidthProperty); }
+            set { SetValue(SelectionWidthProperty, value); }
         }
 
-        public static readonly DependencyProperty VisualWidthProperty =
-            DependencyProperty.Register("VisualWidth", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(400.0));
+        public static readonly DependencyProperty SelectionWidthProperty =
+            DependencyProperty.Register("SelectionWidth", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(400.0));
 
 
-        public double VisualHeight
+        public double SelectionHeight
         {
-            get { return (double)GetValue(VisualHeightProperty); }
-            set { SetValue(VisualHeightProperty, value); }
+            get { return (double)GetValue(SelectionHeightProperty); }
+            set { SetValue(SelectionHeightProperty, value); }
         }
 
-        public static readonly DependencyProperty VisualHeightProperty =
-            DependencyProperty.Register("VisualHeight", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(300.0));
+        public static readonly DependencyProperty SelectionHeightProperty =
+            DependencyProperty.Register("SelectionHeight", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(300.0));
 
-
-        public double RotationAnchorPoint
-        {
-            get { return (double)GetValue(RotationAnchorPointProperty); }
-            set { SetValue(RotationAnchorPointProperty, value); }
-        }
-
-        public static readonly DependencyProperty RotationAnchorPointProperty =
-            DependencyProperty.Register("RotationAnchorPoint", typeof(double), typeof(SelectionAreaControl), new PropertyMetadata(0.5));
 
 
         public SelectionAreaControl()
@@ -63,31 +60,35 @@ namespace CropRotate
         }
 
 
+        private void PanHandle_ResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            PanDelta?.Invoke(this, e);
+        }
+
         private void TopLeftResizeHandle_ResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            //HorizontalOffset += e.Delta.Translation.X;
-            VisualWidth -= e.Delta.Translation.X;
-
-            //VerticalOffset += e.Delta.Translation.Y;
-            VisualHeight -= e.Delta.Translation.Y;
+            TopLeftResizeDelta?.Invoke(this, e);
         }
 
         private void BottomRightResizeHandle_ResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            VisualWidth = Math.Min(VisualWidth + e.Delta.Translation.X, this.MaxWidth);
-            VisualHeight = Math.Min(VisualHeight + e.Delta.Translation.Y, this.MaxHeight);
+            BottomRightResizeDelta?.Invoke(this, e);
         }
 
         private void ResizeHandle_ResizeCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
-            this.ResizeHandlePanel.Width = VisualWidth;
-            this.ResizeHandlePanel.Height = VisualHeight;
+            RefreshResizeHandles();
         }
 
-        private void PanHandle_ResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private void RefreshResizeHandles()
         {
-            HorizontalOffset -= e.Delta.Translation.X;
-            VerticalOffset -= e.Delta.Translation.Y;
+            this.ResizeHandlePanel.Width = SelectionWidth;
+            this.ResizeHandlePanel.Height = SelectionHeight;
+
+            var transform = this.ResizeHandlePanel.RenderTransform as TranslateTransform;
+
+            transform.X = HorizontalOffset;
+            transform.Y = VerticalOffset;
         }
     }
 }

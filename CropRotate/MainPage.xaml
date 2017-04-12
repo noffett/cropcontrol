@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Black">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
@@ -15,7 +15,7 @@
         
         <local:CropRotateControl
             RotationAngle="{x:Bind viewModel.StraighteningAngle, Mode=OneWay}"
-            ImageSource="assets/DSCF4963_SMALL.JPG" />
+            ImageSource="assets/DSCF4974.JPG" />
 
         <Slider
             Orientation="Vertical"
