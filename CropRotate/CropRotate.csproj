@@ -95,24 +95,18 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BorderNineGridScenario.cs" />
     <Compile Include="CropPageViewModel.cs" />
     <Compile Include="CropRotateControl.xaml.cs">
       <DependentUpon>CropRotateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DragHandle.cs" />
-    <Compile Include="InversionConverter.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="NineGridResizing.xaml.cs">
-      <DependentUpon>NineGridResizing.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectionAreaControl.xaml.cs">
       <DependentUpon>SelectionAreaControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ValueTimer.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -145,10 +139,6 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="NineGridResizing.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SelectionAreaControl.xaml">
       <SubType>Designer</SubType>
