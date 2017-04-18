@@ -11,8 +11,8 @@ namespace CropRotate
         public event EventHandler<ManipulationDeltaRoutedEventArgs> PanDelta;
         public event EventHandler<ManipulationDeltaRoutedEventArgs> TopLeftResizeDelta;
         public event EventHandler<ManipulationDeltaRoutedEventArgs> BottomRightResizeDelta;
-
-        public event EventHandler ResizeCompleted;
+        
+        public event EventHandler DragCompleted;
 
         public double HorizontalOffset
         {
@@ -60,34 +60,33 @@ namespace CropRotate
             this.InitializeComponent();
         }
 
-
-        private void PanHandle_ResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private void PanHandle_DragDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             PanDelta?.Invoke(this, e);
         }
 
-        private void TopLeftResizeHandle_ResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private void TopLeftResizeHandle_DragDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             TopLeftResizeDelta?.Invoke(this, e);
         }
 
-        private void BottomRightResizeHandle_ResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private void BottomRightResizeHandle_DragDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             BottomRightResizeDelta?.Invoke(this, e);
         }
 
-        private void ResizeHandle_ResizeCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        private void DragHandle_DragCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
-            ResizeCompleted?.Invoke(this, EventArgs.Empty);
-            RefreshResizeHandles();
+            DragCompleted?.Invoke(this, EventArgs.Empty);
+            RefreshDragHandles();
         }
 
-        private void RefreshResizeHandles()
+        public void RefreshDragHandles()
         {
-            this.ResizeHandlePanel.Width = SelectionWidth;
-            this.ResizeHandlePanel.Height = SelectionHeight;
+            this.DragHandlePanel.Width = SelectionWidth;
+            this.DragHandlePanel.Height = SelectionHeight;
 
-            var transform = this.ResizeHandlePanel.RenderTransform as TranslateTransform;
+            var transform = this.DragHandlePanel.RenderTransform as TranslateTransform;
 
             transform.X = HorizontalOffset;
             transform.Y = VerticalOffset;

@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Input;
 
 namespace CropRotate
 {
-    public enum ResizeHandleOrientation
+    public enum DragHandleOrientation
     {
         None,
         Horizontal,
@@ -17,34 +17,34 @@ namespace CropRotate
         HorizontalAndVertical
     }
 
-    public class ResizeHandle : Control
+    public class DragHandle : Control
     {
-        public event ManipulationDeltaEventHandler ResizeDelta;
-        public event ManipulationCompletedEventHandler ResizeCompleted;
+        public event ManipulationDeltaEventHandler DragDelta;
+        public event ManipulationCompletedEventHandler DragCompleted;
 
-        public ResizeHandleOrientation Orientation
+        public DragHandleOrientation Orientation
         {
-            get { return (ResizeHandleOrientation)GetValue(OrientationProperty); }
+            get { return (DragHandleOrientation)GetValue(OrientationProperty); }
             set { SetValue(OrientationProperty, value); }
         }
 
         public static readonly DependencyProperty OrientationProperty =
-            DependencyProperty.Register("Orientation", typeof(ResizeHandleOrientation), typeof(ResizeHandle), new PropertyMetadata(ResizeHandleOrientation.None, OnOrientationPropertyChanged));
+            DependencyProperty.Register("Orientation", typeof(DragHandleOrientation), typeof(DragHandle), new PropertyMetadata(DragHandleOrientation.None, OnOrientationPropertyChanged));
 
         private static void OnOrientationPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var that = d as ResizeHandle;
-            var orientation = (ResizeHandleOrientation)e.NewValue;
+            var that = d as DragHandle;
+            var orientation = (DragHandleOrientation)e.NewValue;
 
             switch (orientation)
             {
-                case ResizeHandleOrientation.Horizontal:
+                case DragHandleOrientation.Horizontal:
                     that.ManipulationMode = ManipulationModes.TranslateX;
                     break;
-                case ResizeHandleOrientation.Vertical:
+                case DragHandleOrientation.Vertical:
                     that.ManipulationMode = ManipulationModes.TranslateY;
                     break;
-                case ResizeHandleOrientation.HorizontalAndVertical:
+                case DragHandleOrientation.HorizontalAndVertical:
                     that.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
                     break;
             }
@@ -52,12 +52,12 @@ namespace CropRotate
 
         protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs e)
         {
-            ResizeDelta?.Invoke(this, e);
+            DragDelta?.Invoke(this, e);
         }
 
         protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs e)
         {
-            ResizeCompleted?.Invoke(this, e);
+            DragCompleted?.Invoke(this, e);
         }
     }
 }

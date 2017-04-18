@@ -5,11 +5,11 @@
     xmlns:local="using:CropRotate">
 
     <UserControl.Resources>
-        <Style TargetType="local:ResizeHandle">
+        <Style TargetType="local:DragHandle">
             <Setter Property="Background" Value="#AAFFFFFF" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="local:ResizeHandle">
+                    <ControlTemplate TargetType="local:DragHandle">
                         <Border
                             Background="{TemplateBinding Background}" />
                     </ControlTemplate>
@@ -20,7 +20,7 @@
 
     <Grid>
         <Grid
-            x:Name="ResizeHandlePanel"
+            x:Name="DragHandlePanel"
             HorizontalAlignment="Left"
             VerticalAlignment="Top">
             <Grid.RenderTransform>
@@ -38,51 +38,53 @@
                 <ColumnDefinition Width="15" />
             </Grid.ColumnDefinitions>
 
-            <local:ResizeHandle
-                Grid.Row="0"
-                Grid.Column="0"
-                Orientation="HorizontalAndVertical"
-                ResizeDelta="TopLeftResizeHandle_ResizeDelta"
-                ResizeCompleted="ResizeHandle_ResizeCompleted" />
-            <local:ResizeHandle
-                Grid.Row="0"
-                Grid.Column="1"
-                Orientation="Vertical"
-                ResizeDelta="TopLeftResizeHandle_ResizeDelta"
-                ResizeCompleted="ResizeHandle_ResizeCompleted" />
-
-            <local:ResizeHandle
-                Grid.Row="1"
-                Grid.Column="0"
-                Orientation="Horizontal"
-                ResizeDelta="TopLeftResizeHandle_ResizeDelta"
-                ResizeCompleted="ResizeHandle_ResizeCompleted" />
-            <local:ResizeHandle
-                x:Name="PanHandle"
+            <!-- Pan handle -->
+            <local:DragHandle
                 Background="Transparent"
                 Grid.Row="1"
                 Grid.Column="1"
                 Orientation="HorizontalAndVertical"
-                ResizeDelta="PanHandle_ResizeDelta" />
-            <local:ResizeHandle
+                DragDelta="PanHandle_DragDelta" />
+
+            <!-- Resize handles -->
+            <local:DragHandle
+                Grid.Row="0"
+                Grid.Column="0"
+                Orientation="HorizontalAndVertical"
+                DragDelta="TopLeftResizeHandle_DragDelta"
+                DragCompleted="DragHandle_DragCompleted" />
+            <local:DragHandle
+                Grid.Row="0"
+                Grid.Column="1"
+                Orientation="Vertical"
+                DragDelta="TopLeftResizeHandle_DragDelta"
+                DragCompleted="DragHandle_DragCompleted" />
+
+            <local:DragHandle
+                Grid.Row="1"
+                Grid.Column="0"
+                Orientation="Horizontal"
+                DragDelta="TopLeftResizeHandle_DragDelta"
+                DragCompleted="DragHandle_DragCompleted" />
+            <local:DragHandle
                 Grid.Row="1"
                 Grid.Column="2"
                 Orientation="Horizontal"
-                ResizeDelta="BottomRightResizeHandle_ResizeDelta"
-                ResizeCompleted="ResizeHandle_ResizeCompleted" />
+                DragDelta="BottomRightResizeHandle_DragDelta"
+                DragCompleted="DragHandle_DragCompleted" />
 
-            <local:ResizeHandle
+            <local:DragHandle
                 Grid.Row="2"
                 Grid.Column="1"
                 Orientation="Vertical"
-                ResizeDelta="BottomRightResizeHandle_ResizeDelta"
-                ResizeCompleted="ResizeHandle_ResizeCompleted" />
-            <local:ResizeHandle
+                DragDelta="BottomRightResizeHandle_DragDelta"
+                DragCompleted="DragHandle_DragCompleted" />
+            <local:DragHandle
                 Grid.Row="2"
                 Grid.Column="2"
                 Orientation="HorizontalAndVertical"
-                ResizeDelta="BottomRightResizeHandle_ResizeDelta"
-                ResizeCompleted="ResizeHandle_ResizeCompleted" />
+                DragDelta="BottomRightResizeHandle_DragDelta"
+                DragCompleted="DragHandle_DragCompleted" />
         </Grid>
 
         <Rectangle

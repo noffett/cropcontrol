@@ -39,6 +39,6 @@
             PanDelta="SelectionArea_PanDelta"
             TopLeftResizeDelta="SelectionArea_TopLeftResizeDelta"
             BottomRightResizeDelta="SelectionArea_BottomRightResizeDelta"
-            ResizeCompleted="SelectionArea_ResizeCompleted" />
+            DragCompleted="SelectionArea_DragCompleted" />
     </Grid>
 </UserControl>

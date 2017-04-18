@@ -179,7 +179,6 @@ namespace CropRotate
             SetOffsets();
         }
 
-
         private void ResizeCropArea(double deltaX, double deltaY)
         {
             double? width = CropArea.Width;
@@ -192,7 +191,19 @@ namespace CropRotate
 
             ScreenPixelsToNormalized(ref width, ref height);
 
-            CropArea = new Rect() { X = CropArea.X, Y = CropArea.Y, Width = width.Value, Height = height.Value };
+            var newCrop = new Rect() { X = CropArea.X, Y = CropArea.Y, Width = width.Value, Height = height.Value };
+
+            //Constrain new values
+            if ((newCrop.X + newCrop.Width) > 1.0)
+            {
+                newCrop.Width = 1.0 - newCrop.X;
+            }
+            else if ((newCrop.Y + newCrop.Height) > 1.0)
+            {
+                newCrop.Height = 1.0 - newCrop.Y;
+            }
+
+            CropArea = newCrop;
         }
 
         private void PanCropArea(double deltaX, double deltaY)
@@ -228,6 +239,10 @@ namespace CropRotate
 
             ImageHorizontalOffset = (SelectionHorizontalOffset - CropArea.X);
             ImageVerticalOffset = (SelectionVerticalOffset - CropArea.Y);
+
+            //TEMP
+            this.SelectionArea.RefreshDragHandles();
+            //TEMP
         }
 
         private void SelectionArea_TopLeftResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
@@ -237,19 +252,26 @@ namespace CropRotate
 
             SelectionHorizontalOffset += e.Delta.Translation.X;
             SelectionVerticalOffset += e.Delta.Translation.Y;
-            
+
             SelectionWidth -= e.Delta.Translation.X;
             SelectionHeight -= e.Delta.Translation.Y;
         }
 
+        private double delta = 0.0;
+
         private void SelectionArea_BottomRightResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            ResizeCropArea(e.Delta.Translation.X, e.Delta.Translation.Y);
+            var deltaY = SelectionWidth += e.Delta.Translation.X;
 
-            SelectionWidth += e.Delta.Translation.X;
-            SelectionHeight += e.Delta.Translation.Y;
+            if (SelectionWidth + e.Delta.Translation.X > this.ImageControl.Width)
+            {
+                SelectionWidth += e.Delta.Translation.X;
+            }
+                SelectionHeight += e.Delta.Translation.Y;
+
+            ResizeCropArea(e.Delta.Translation.X, e.Delta.Translation.Y);
         }
-        
+
         private void SelectionArea_PanDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             PanCropArea(-e.Delta.Translation.X, -e.Delta.Translation.Y);
@@ -258,7 +280,7 @@ namespace CropRotate
             ImageVerticalOffset += e.Delta.Translation.Y;
         }
 
-        private void SelectionArea_ResizeCompleted(object sender, EventArgs e)
+        private void SelectionArea_DragCompleted(object sender, EventArgs e)
         {
             var previousWidth = SelectionWidth;
             MaximizeSelectionArea();
@@ -266,7 +288,7 @@ namespace CropRotate
         }
 
         /// <summary>
-        /// Maximizes size of SelectionArea given current ratio and margins
+        /// Maximizes size of SelectionArea given current ratio and SelectionAreaMargin
         /// </summary>
         private void MaximizeSelectionArea()
         {
@@ -298,10 +320,10 @@ namespace CropRotate
             double? y = CropArea.Y;
             NormalizedToScreenPixels(ref x, ref y);
 
-            ImageHorizontalOffset = (SelectionHorizontalOffset - x.Value);
-            ImageVerticalOffset = (SelectionVerticalOffset - y.Value);
+            ImageHorizontalOffset = SelectionHorizontalOffset - x.Value;
+            ImageVerticalOffset = SelectionVerticalOffset - y.Value;
         }
-        
+
         private void ScreenPixelsToNormalized(ref double? horizontal, ref double? vertical)
         {
             if (horizontal != null)
@@ -325,5 +347,7 @@ namespace CropRotate
                 vertical = vertical * _imageActualSize.Height * ImageScale;
             }
         }
+
+
     }
 }
