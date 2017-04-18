@@ -32,16 +32,8 @@ namespace CropRotate
         }
 
         public static readonly DependencyProperty CropAreaProperty =
-            DependencyProperty.Register("CropArea", typeof(Rect), typeof(CropRotateControl), new PropertyMetadata(new Rect(), new PropertyChangedCallback(OnCropAreaPropertyChanged)));
+            DependencyProperty.Register("CropArea", typeof(Rect), typeof(CropRotateControl), new PropertyMetadata(new Rect(0.0, 0.0, 1.0, 1.0)));
 
-        private static void OnCropAreaPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var that = d as CropRotateControl;
-            var rect = (Rect)e.NewValue;
-
-            that.SelectionWidth = rect.Width;
-            that.SelectionHeight = rect.Height;
-        }
 
         public double RotationAngle
         {
@@ -187,6 +179,37 @@ namespace CropRotate
             SetOffsets();
         }
 
+
+        private void ResizeCropArea(double deltaX, double deltaY)
+        {
+            double? width = CropArea.Width;
+            double? height = CropArea.Height;
+
+            NormalizedToScreenPixels(ref width, ref height);
+
+            width += deltaX;
+            height += deltaY;
+
+            ScreenPixelsToNormalized(ref width, ref height);
+
+            CropArea = new Rect() { X = CropArea.X, Y = CropArea.Y, Width = width.Value, Height = height.Value };
+        }
+
+        private void PanCropArea(double deltaX, double deltaY)
+        {
+            double? x = CropArea.X;
+            double? y = CropArea.Y;
+
+            NormalizedToScreenPixels(ref x, ref y);
+
+            x += deltaX;
+            y += deltaY;
+
+            ScreenPixelsToNormalized(ref x, ref y);
+
+            CropArea = new Rect() { X = x.Value, Y = y.Value, Width = CropArea.Width, Height = CropArea.Height };
+        }
+
         private void SetOffsets()
         {
             var nettoWidth = this.ActualWidth - SelectionAreaMargin.Left - SelectionAreaMargin.Right;
@@ -209,34 +232,27 @@ namespace CropRotate
 
         private void SelectionArea_TopLeftResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
+            PanCropArea(e.Delta.Translation.X, e.Delta.Translation.Y);
+            ResizeCropArea(-e.Delta.Translation.X, -e.Delta.Translation.Y);
+
             SelectionHorizontalOffset += e.Delta.Translation.X;
             SelectionVerticalOffset += e.Delta.Translation.Y;
-
-            var x = CropArea.X + e.Delta.Translation.X;
-            var y = CropArea.Y + e.Delta.Translation.Y;
-            var width = CropArea.Width - e.Delta.Translation.X;
-            var height = CropArea.Height - e.Delta.Translation.Y;
-
-            CropArea = new Rect() { X = x, Y = y, Width = width, Height = height };
+            
+            SelectionWidth -= e.Delta.Translation.X;
+            SelectionHeight -= e.Delta.Translation.Y;
         }
 
         private void SelectionArea_BottomRightResizeDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            var width = CropArea.Width + e.Delta.Translation.X;
-            var height = CropArea.Height + e.Delta.Translation.Y;
+            ResizeCropArea(e.Delta.Translation.X, e.Delta.Translation.Y);
 
-            CropArea = new Rect() { X = CropArea.X, Y = CropArea.Y, Width = width, Height = height };
-
-            //that.SelectionWidth = rect.Width;
-            //that.SelectionHeight = rect.Height;
+            SelectionWidth += e.Delta.Translation.X;
+            SelectionHeight += e.Delta.Translation.Y;
         }
-
+        
         private void SelectionArea_PanDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            var x = CropArea.X - e.Delta.Translation.X;
-            var y = CropArea.Y - e.Delta.Translation.Y;
-
-            CropArea = new Rect() { X = x, Y = y, Width = CropArea.Width, Height = CropArea.Height };
+            PanCropArea(-e.Delta.Translation.X, -e.Delta.Translation.Y);
 
             ImageHorizontalOffset += e.Delta.Translation.X;
             ImageVerticalOffset += e.Delta.Translation.Y;
@@ -249,6 +265,9 @@ namespace CropRotate
             ScaleImage(previousWidth);
         }
 
+        /// <summary>
+        /// Maximizes size of SelectionArea given current ratio and margins
+        /// </summary>
         private void MaximizeSelectionArea()
         {
             //Get size of viewport minus margins
@@ -275,14 +294,36 @@ namespace CropRotate
             var selectedImagePixels = previousWidth / ImageScale;
             ImageScale = SelectionWidth / selectedImagePixels;
 
-            ImageHorizontalOffset = (SelectionHorizontalOffset - CropArea.X);
-            ImageVerticalOffset = (SelectionVerticalOffset - CropArea.Y);
+            double? x = CropArea.X;
+            double? y = CropArea.Y;
+            NormalizedToScreenPixels(ref x, ref y);
+
+            ImageHorizontalOffset = (SelectionHorizontalOffset - x.Value);
+            ImageVerticalOffset = (SelectionVerticalOffset - y.Value);
+        }
+        
+        private void ScreenPixelsToNormalized(ref double? horizontal, ref double? vertical)
+        {
+            if (horizontal != null)
+            {
+                horizontal = horizontal / _imageActualSize.Width / ImageScale;
+            }
+            if (vertical != null)
+            {
+                vertical = vertical / _imageActualSize.Height / ImageScale;
+            }
         }
 
-
-        private double GetImagePixelsFromScreenPixels(double pixels)
+        private void NormalizedToScreenPixels(ref double? horizontal, ref double? vertical)
         {
-            return pixels * (1.0 / ImageScale);
+            if (horizontal != null)
+            {
+                horizontal = horizontal * _imageActualSize.Width * ImageScale;
+            }
+            if (vertical != null)
+            {
+                vertical = vertical * _imageActualSize.Height * ImageScale;
+            }
         }
     }
 }

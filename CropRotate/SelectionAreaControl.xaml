@@ -6,7 +6,7 @@
 
     <UserControl.Resources>
         <Style TargetType="local:ResizeHandle">
-            <Setter Property="Background" Value="Goldenrod" />
+            <Setter Property="Background" Value="#AAFFFFFF" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="local:ResizeHandle">
@@ -28,14 +28,14 @@
             </Grid.RenderTransform>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="20" />
+                <RowDefinition Height="15" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="20" />
+                <RowDefinition Height="15" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="15" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="15" />
             </Grid.ColumnDefinitions>
 
             <local:ResizeHandle

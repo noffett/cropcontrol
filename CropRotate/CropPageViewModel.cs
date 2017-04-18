@@ -6,7 +6,7 @@ namespace CropRotate
 {
     public class CropPageViewModel : BindableBase
     {
-        private Rect cropArea;
+        private Rect cropArea = new Rect(0.0, 0.0, 1.0, 1.0);
         private double straighteningAngle;
 
         public Rect CropArea
@@ -32,7 +32,7 @@ namespace CropRotate
         {
             get
             {
-                return $"X: {Math.Round(CropArea.X, 0)}\nY: {Math.Round(CropArea.Y, 0)}\nW: {Math.Round(CropArea.Width, 0)}\nH: {Math.Round(CropArea.Height, 0)}";
+                return $"X: {Math.Round(CropArea.X, 3)}\nY: {Math.Round(CropArea.Y, 3)}\nW: {Math.Round(CropArea.Width, 3)}\nH: {Math.Round(CropArea.Height, 3)}";
             }
         }
     }
